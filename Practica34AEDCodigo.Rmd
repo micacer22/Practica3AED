@@ -441,6 +441,11 @@ flights.f <- flights %>%
 head(flights.f)
 dim(flights.f)
 ```
+
+### Ejercicio 8
+
+Reasigna los nombres de los data frames `planes.f` y `flights.f` a los nombres originales `planes` y `flights`.
+
 ```{r ejercicio-8}
 #Reasignación dataframes filtrados
 planes <- planes.f
@@ -451,5 +456,28 @@ dim(flights) #171879     19
 
 head(planes)
 head(flights)
+```
+
+### Ejercicio 9
+
+Existen variables que, a priori, no tienen demasiado interés para el estudio que queremos llevar a cabo, en particular queremos eliminar:
+
+- En el data frame `flights` quédate con todas las variables excepto `time_hour` y las variables que terminan con la palabra “time”.
+- En el data frame `planes` quédate con todas las variables excepto `speed` y `type`.
+
+```{r ejercicio-9}
+# Eliminar las variables time_hour y las variables que terminan con la palabra “time”.
+flights <- flights %>%
+  select(-time_hour, -ends_with("time"))
+
+# Eliminar las variables speed y type
+planes <- planes %>%
+  select(-speed, -type)
+
+#resultados
+names(flights)
+names(planes)
+head(flights)
+head(planes)
 ```
 
