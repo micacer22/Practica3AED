@@ -244,7 +244,7 @@ str(billboard_tidy)
 
 El conjunto de datos `tuberculosis`, de la *World Health Organization*, presenta este tipo de desordenación (además de la vista en el apartado anterior). Muestra el número de casos de tuberculosis por país, año y grupo demográfico. Estos grupos demográficos se muestran en los nombres de las columnas como `m` o `f` (sexo) y la edad (0-14, 15-24, 25-34, 35-44, 45-54, 55-64, 65- y desconocido (`u`)).
 
-```{r bloque-14, eval=FALSE}
+```{r bloque-14}
 load('P3P4_ALUMNOS/data/tb.Rdata')
 head(raw[, 1:16])
 ```
@@ -504,6 +504,20 @@ names(flights)
 Utilizando las funciones `group_by`, `summarise` y `filter`, crea un data frame donde se calcule el número de vuelos (`Num_flights`), la distancia media recorrida (`Mean_distance`) y la distancia total recorrida (`Total_distance`) para cada uno de los aviones (`tailnum`) presentes en el conjunto `flights`. Descarta aquellos registros del data frame en los que la variable `tailnum` tenga un valor NA. Utiliza el operador pipe para enlazar las funciones. Almacena el data frame en una variable denominada `Distances_plane`.
 
 ```{r ejercicio-11}
+#Creamos Distances_plane
+Distances_plane <- flights %>%
+  filter(!is.na(tailnum)) %>%
+  group_by(tailnum) %>%
+  summarise(
+    Num_flights = n(),
+    Mean_distance = mean(distance, na.rm = TRUE),
+    Total_distance = sum(distance, na.rm = TRUE),
+    .groups = "drop"
+  )
 
+# resultados
+head(Distances_plane)
+str(Distances_plane)
+nrow(Distances_plane)
 ```
 
