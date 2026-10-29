@@ -187,7 +187,7 @@ Para convertir este conjunto a formato *tidy* tendremos que agrupar todas las co
 Convierte el dataset pew_religion a formato tidy usando gather. La columna income debe contener una variable de tipo factor.
 
 Otro ejemplo usando el conjunto de datos Billboard que muestra cuando una canción entró en el top 100.
-```{r eejmplo ejercicio 1}
+```{r ejmplo ejercicio 1}
 load('P3P4_ALUMNOS/data/billboard.Rdata')
 head(raw[, 1:12])
 ```
@@ -195,7 +195,7 @@ La posición (*ranking*) de cada canción en cada semana después de haber entra
 
 Para obtener la versión *tidy* hemos de juntar todas las columnas desde `wk1` a `wk76` asignando como clave (`key`) una variable de nombre `week`, como valor (`value`) otra variable de nombre `rank`.
 
-```{r ejercicio 1, eval=FALSE}
+```{r ejercicio 1, eval=TRUE}
 library(tidyr)
 library(dplyr)
 
@@ -217,4 +217,27 @@ pew_religion_tidy$income <- as.factor(pew_religion_tidy$income)
 head(pew_religion_tidy)
 str(pew_religion_tidy)
 ```
+### Ejercicio 2
+
+Obtén la versión *tidy* de este conjunto de datos usando `pivot_longer`.
+
+Consejo: puedes eliminar el prefijo `wk` de las semanas mediante el argumento `names_prefix`. Opcionalmente puedes crear una columna `date` a partir de `date.entered`, sumando las semanas transcurridas desde la fecha de entrada en lista.
+```{r ejercicio 2, eval=TRUE}
+# Transformar columnas a formato tidy
+billboard_tidy <- raw %>%
+  pivot_longer(
+    cols = wk1:wk76,
+    names_to = "week",
+    values_to = "rank",
+    names_prefix = "wk",
+    values_drop_na = TRUE
+  )
+
+# Semanas a números
+billboard_tidy$week <- as.integer(billboard_tidy$week)
+
+# resultado
+head(billboard_tidy)
+str(billboard_tidy)
 ```
+
