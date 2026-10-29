@@ -429,4 +429,16 @@ nrow(planes.f)
 range(planes.f$seats)
 ```
 
+### Ejercicio 7
+
+Crea un data frame denominado `flights.f` que contenga los vuelos que involucren a los aviones presentes en el data frame `planes.f`. Para ello utiliza algunas de las funciones de **XXX_join** y la variable `tailnum` que es común en ambos data frames.
+```{r ejercicio-7}
+# vuelos correspondientes a los aviones filtrados antes
+flights.f <- flights %>%
+  semi_join(planes.f, by = "tailnum")
+
+# resultado
+head(flights.f)
+dim(flights.f)
+```
 
