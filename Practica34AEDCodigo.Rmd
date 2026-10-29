@@ -441,4 +441,15 @@ flights.f <- flights %>%
 head(flights.f)
 dim(flights.f)
 ```
+```{r ejercicio-8}
+#Reasignación dataframes filtrados
+planes <- planes.f
+flights <- flights.f
+
+dim(planes) #2195    9
+dim(flights) #171879     19
+
+head(planes)
+head(flights)
+```
 
