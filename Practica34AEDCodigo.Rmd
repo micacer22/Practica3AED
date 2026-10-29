@@ -342,3 +342,47 @@ str(weather_tidy)
 summary(weather_tidy)
 ```
 
+# DPLYR
+
+## Introducción y objetivos.
+
+El objetivo de esta práctica es manejar data frames estructurados (variables en columnas, muestras en filas) con **tidyR** de una manera eficiente y sencilla utilizando la librería **DPLYR**. Esta librería fue desarrollada por Hadley Wickham (el creador de tidyR) con funciones programadas en C++ de manera óptima. Cuando hablamos de manejar data frames nos referimos a realizar operaciones sobre las muestras y sobre las variables tales como:
+
+1.  Seleccionar muestras de un data frame en base a algún tipo de criterio.
+2.  Seleccionar variables que cumplan alguna condición.
+3.  Ordenar las muestras de un data frame.
+4.  Unir varios data frames.
+5.  Crear nuevas variables a partir de las variables existentes.
+6.  Agrupar muestras que cumplan algún criterio para realizar cálculos estadísticos.
+
+Para llevar a cabo estas operaciones **DPLYR** proporciona una serie de funciones que enumeramos a continuación:
+
+- `select()`. Permite seleccionar un subconjunto de las variables (columnas) del data frame.
+- `filter()`. Esta función, como su propio nombre indica, permite filtrar las muestras (filas) de un data frame en base a algún criterio.
+- `group_by()`. Esta función crea grupos de muestras a partir de las categorías de una variable.
+- `summarise()`. Esta función facilita el cálculo de parámetros estadísticos de las variables de un data frame.
+- `arrange()`. Permite reordenar las muestras de un data frame.
+- `XXX_join()`. Las funciones de la familia *XXX_join* permiten combinar data frames.
+- `rename()`. Esta función permite renombrar variables de un data frame.
+- `mutate()`. Esta función permite añadir nuevas variables (columnas) a partir de la transformación de columnas ya existentes.
+- `%>%` Es el operador *pipe* que permite concatenar funciones.
+
+En clase de teoría te han explicado cómo utilizar estas funciones y ya has trabajado con ellas, así que vamos a ver como te desenvuelves con **DPLYR**.
+
+Vamos a cargar el conjunto de datos `VuelosNY.Rdata` que contiene dos data frames: `flights` y `planes`.
+
+### Ejercicio 5
+
+Muestra las primeras muestras de ambos data frames para hacerte una idea de las variables que contienen. ¿Qué diferencia existe entre la información mostrada en ambos data frames?
+
+```{r ejercicio-5}
+#los datos de vuelos y aviones
+load("P3P4_ALUMNOS/data/VuelosNY.Rdata")
+head(flights)
+head(planes)
+dim(flights)
+dim(planes)
+str(flights)
+str(planes)
+```
+
