@@ -481,3 +481,21 @@ head(flights)
 head(planes)
 ```
 
+### Ejercicio 10
+
+Incorpora una nueva variable a `flights` denominado `Full_Date` que sea de tipo `character` que incorpore una cadena de texto de la forma `d-m-Y`. Donde `d` indica día, `m` mes e `Y` año, a partir de la información incluida en el data frame. Utiliza una función de **DPLYR** que permita conseguir este propósito. Elimina las variables originales involucradas en la creación de la nueva variable.
+
+```{r ejercicio-10}
+# Crear la nueva variable Full_Date
+flights <- flights %>%
+  mutate(
+    Full_Date = paste(day, month, year, sep = "-")
+  ) %>%
+  select(-day, -month, -year)
+
+# resultado
+head(flights)
+class(flights$Full_Date)
+names(flights)
+```
+
