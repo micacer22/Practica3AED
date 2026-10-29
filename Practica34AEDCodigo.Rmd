@@ -572,5 +572,46 @@ Esto se puede hacer fácilmente con las librerías `plyr` y `dplyr`.
 
 En la librería *tidyr* hay varios conjuntos de datos. **table1** es un conjunto *tidy* pero **table5** no lo es. Realiza las operaciones necesarias para obtener **table1** a partir de **table5**. También deben coincidir los tipos de datos de las columnas.
 
+```{r ej extra 2}
+data("table1", package = "tidyr")
+data("table5", package = "tidyr")
+
+head(table5)
+str(table5)
+
+# table5 a formato tidy
+table5_tidy <- table5 %>%
+  unite(
+    col = "year",
+    century, year,
+    sep = ""
+  ) %>%
+  separate(
+    col = rate,
+    into = c("cases", "population"),
+    sep = "/",
+    convert = TRUE
+  ) %>%
+  mutate(
+    year = as.integer(year)
+  ) %>%
+  select(country, year, cases, population)
+
+# resultado
+head(table5_tidy)
+str(table5_tidy)
+head(table1)
+str(table1)
+#son equivalentes?
+all.equal(table5_tidy, table1)
+```
+## DPLYR
+
+### Ejercicio Extra 3
+
+Consigue un data frame denominado `Distance_Manufacturer_model` que contenga 4 columnas (`tailnum`,`Total_distance`, `manufacturer` y `model`) ordenado de mayor a menor en base a la variable `Total_distance`. Para ello une los data frames `Distances_plane` (calculado en el ejercicio anterior y que contiene las distancias totales) y `planes` (que contiene los datos de cada modelo de avión). La variable que te permitirá unir ambos data frames es `tailnum`. A continuación deberás ordenar, en orden descendente de la variable `Total_distance` el data frame resultante. Finalmente selecciona las variables que tiene que contener la tabla final (`Total_distance`, `manufacturer` y `model`). Utiliza el operador pipe para enlazar las funciones.
+
+
+
 
 
