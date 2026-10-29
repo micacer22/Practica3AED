@@ -182,6 +182,39 @@ Fíjate que este gráfico es mucho más fácil de realizar si en lugar de tener 
 
 Para convertir este conjunto a formato *tidy* tendremos que agrupar todas las columnas excepto la de `religion` en dos, una llamada `income` con los intervalos de ingresos, y otra llamada `freq` con el número de casos para cada `income`. Como ya hemos visto en el ejemplo del conjunto IRIS, esto se consigue con `gather`.
 
+# Ejercicio 1
 
+Convierte el dataset pew_religion a formato tidy usando gather. La columna income debe contener una variable de tipo factor.
 
+Otro ejemplo usando el conjunto de datos Billboard que muestra cuando una canción entró en el top 100.
+```{r eejmplo ejercicio 1}
+load('P3P4_ALUMNOS/data/billboard.Rdata')
+head(raw[, 1:12])
+```
+La posición (*ranking*) de cada canción en cada semana después de haber entrado en el Top 100 se almacena en las columnas `wk1` a `wk76` (ver `str(raw)`). Si un tema sale del Top 100 antes de 76 semanas se rellenan los datos con NA’s.
 
+Para obtener la versión *tidy* hemos de juntar todas las columnas desde `wk1` a `wk76` asignando como clave (`key`) una variable de nombre `week`, como valor (`value`) otra variable de nombre `rank`.
+
+```{r ejercicio 1, eval=FALSE}
+library(tidyr)
+library(dplyr)
+
+# Cargar datos
+data("relig_income", package = "tidyr")
+
+# Formato tidy usando gather()
+pew_religion_tidy <- relig_income %>%
+  gather(
+    key = "income",
+    value = "frequency",
+    -religion
+  )
+
+# Income a factor
+pew_religion_tidy$income <- as.factor(pew_religion_tidy$income)
+
+# Resultado
+head(pew_religion_tidy)
+str(pew_religion_tidy)
+```
+```
