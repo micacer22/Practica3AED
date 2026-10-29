@@ -380,9 +380,11 @@ Muestra las primeras muestras de ambos data frames para hacerte una idea de las 
 load("P3P4_ALUMNOS/data/VuelosNY.Rdata")
 head(flights)
 head(planes)
-dim(flights)
-dim(planes)
+dim(flights) # 336776     19
+dim(planes) #3322    9
 str(flights)
 str(planes)
 ```
+Flights contiene información sobre los vuelos realizados, como por ejemplo: fechas, aeropuertos, horarios y retrasos (entre otras).Por el contrario, Planes contiene información sobre las características de los aviones, como por ejemplo: fabricante, modelo, año de fabricación y número de asientos.
+Ambos conjuntos de datos comparten la variable "tailnum", que identifica el avión y permite relacionar los vuelos con sus características (es decir, una variable relacional entre ambas bases de datos).
 
