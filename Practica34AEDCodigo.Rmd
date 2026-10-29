@@ -388,3 +388,45 @@ str(planes)
 Flights contiene información sobre los vuelos realizados, como por ejemplo: fechas, aeropuertos, horarios y retrasos (entre otras).Por el contrario, Planes contiene información sobre las características de los aviones, como por ejemplo: fabricante, modelo, año de fabricación y número de asientos.
 Ambos conjuntos de datos comparten la variable "tailnum", que identifica el avión y permite relacionar los vuelos con sus características (es decir, una variable relacional entre ambas bases de datos).
 
+### Ejercicio 6
+
+En nuestro estudio queremos aplicar una serie de criterios de exclusión sobre las muestras de ambos data frames. En concreto queremos eliminar los aviones fabricados por el fabricante MCDONELL DOUGLAS (vigila si existe más de una denominación de esta compañía en la variable `manufacturer`). Del mismo modo, queremos seleccionar aquellos aviones en los que el número de asientos esté entre 90 y 210 (variable `seats`). Aplica las dos operaciones de filtrado secuencialmente utilizando el operador *pipe* y almacena el data frame resultante en `planes.f`. En el data frame resultante unifica las denominaciones del fabricante `AIRBUS` bajo la denominación `"AIRBUS COMP"`.
+
+- Nota: Revisar el uso de la función filter vista en clase y tener en cuenta los operadores de comparación: igual ==, distinto !=, mayor \>, mayor o igual \>=, menor \<, menor o igual \<=.
+
+```{r ejercicio 6}
+# denominaciones de los fabricantes
+unique(planes$manufacturer)
+
+# Filtrar aviones
+planes.f <- planes %>%
+  # Eliminar MCDONNELL DOUGLAS
+  filter(!grepl("MCDONNELL DOUGLAS", manufacturer,
+                ignore.case = TRUE)) %>%
+
+  # aviones entre 90 y 210 asientos
+  filter(seats >= 90 & seats <= 210) %>%
+
+  # Unificar AIRBUS
+  mutate(
+    manufacturer = if_else(
+      grepl("AIRBUS", manufacturer, ignore.case = TRUE),
+      "AIRBUS COMP",
+      manufacturer
+    )
+  )
+
+# resultados
+head(planes.f)
+
+# fabricantes restantes
+unique(planes.f$manufacturer)
+
+# número de aviones
+nrow(planes.f)
+
+# intervalo de asientos
+range(planes.f$seats)
+```
+
+
