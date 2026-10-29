@@ -26,6 +26,162 @@ packages=c("tidyverse", "knitr", "ggplot2", "datasets", "RColorBrewer",'dplyr','
 pacman::p_load(char=packages)
 ```
 
+# TidyR
+
+## Introducción
+
+El objetivo de esta práctica es preparar los datos de una manera estructurada. Para ello vamos a seguir las recomendaciones del artículo de Hadley Wickham, *Tidy Data*, donde nos muestra una forma de estructurar (u organizar) los datos, de manera que se faciliten posteriores cadenas de procesado (visualización, obtención de datos estadísticos, modelización, etc.).
+
+Decimos que un conjunto de datos está estructurado u organizado (se usa el término *tidy* en inglés) cuando cumple estas tres condiciones:
+
+1.  Cada variable está en una columna.
+2.  Cada observación está en una fila.
+3.  Cada unidad de observación está en una tabla.
+
+Por el contrario, si no se cumple cualquiera de estas tres condiciones decimos que los datos están desordenados (*messy*).
+
+Parece fácil, pero el problema viene al definir exactamente qué es lo que entendemos por variables y observaciones.
+
+- Una variable (columna) contiene los valores correspondientes a un atributo (ej. altura, tiempo, etc.).
+- Una observación (fila) contiene los valores medidos sobre la misma unidad (una persona, una fecha, una muestra etc.) a lo largo de los atributos.
+
+Vamos a ver un ejemplo con el dataset IRIS.
+
+```{r bloque-02, eval=FALSE}
+head(iris)
+```
+
+¿Es un conjunto *tidy*?
+
+- ¿Cada variable está en una columna? Depende de lo que definamos como variable. Según hemos visto, una variable debería contener todos los valores que miden un atributo. En este caso el atributo `Width` aparece en dos columnas, `Sepal.Width` y `Petal.Width`. Lo mismo ocurre con `Length`. También las partes de la flor: `Sepal` y `Petal` aparecen en varias columnas.
+
+- ¿Cada fila es una única observación?
+
+Veamos que aspecto tiene el conjunto IRIS una vez estructurado:
+
+```{r bloque-03, eval=FALSE}
+load('data/iris_tidy.Rdata')
+head(iris.tidy)
+```
+
+Como se puede observar, en la versión *tidy* se han reorganizado los datos de manera que todos los valores medidos en una misma unidad ocupan una única columna. Para ello se han creado dos nuevas columnas correspondientes a dos nuevas variables, `Part`, que indica si se trata de `Sepal` o `Petal`, y `Measure`, que indica si se ha medido `Length` o `Width`.
+
+### Librería `tidyr`: organización de datos en tablas
+
+Para ayudarnos en la tarea de estructurar los datos según este formato *tidy*, en R se dispone de la librería `tidyr`. Consulta cualquier cheatsheet sobre tidyR para ver cuáles son las funciones más importantes de esta librería. En esta práctica veremos sobretodo las siguientes:
+
+- `gather(data, key, value, ...)`: permite agrupar o juntar varias columnas en una sola en función de una misma clave (`key`) que toma los valores de los encabezados de las columnas agrupadas, y una columna `value` toma los valores de sus celdas.
+- `spread(data, key, value, ...)`: hace lo contrario que `gather`, divide o esparce los valores que toma una variable dada por `key`/`value` como nuevas columnas cuyos nombres son los valores de `key`.
+- `separate(data, col, into, ...)`: separa los contenidos que hay en una columna en varias columnas sin cambiar el número de observaciones (no confundir con `spread`).
+- `unite(data, col, ...)`: hace lo contrario de `separate`, junta los contenidos de varias columnas (no confundir con `gather`).
+
+Aunque `gather` y `spread` se siguen utilizando, existen dos nuevas funciones de `tidyr` que tienen un comportamianto similar:
+
+- `pivot_longer(data, cols, names_to, values_to)`: condensa la información de las columnas `cols` en dos, dadas por los valores de sus encabezados (`names_to`), y los contenidos de sus celdas (`values_to`).
+- `pivot_wider(data, names_from, values_from)`: es el caso inverso: extiende las columnas dadas por `names_from` y `values_from` a tantas columnas como valores tome la variable `names_from`.
+
+También son interesantes las siguientes:
+
+- `drop_na(data, ...)`: elimina las filas que contienen NA’s.
+- `fill(data, ...)`: sustituye los NA’s por el valor más reciente no NA.
+- `replace_na(data, replace=list(), ...)`: reemplaza los NA’s con los valores suministrados.
+
+Volviendo al ejemplo del dataset IRIS, veamos cómo podemos usar `gather` y `separate` para convertir el conjunto original `iris` en el conjunto `iris.tidy`.
+
+```{r bloque-04, eval=FALSE}
+library(tidyr)
+# Primero agrupamos todas las unidades
+# Agrupamos todas las columnas con datos excepto Species, que está bien
+# iris.t <- gather(data=iris, key="Part", value="Value", 1:4)
+#iris.t <- gather(iris, Part, Value, Sepal.Length:Petal.Width)
+iris.t <- gather(iris, Part, Value, -Species)
+head(iris.t)
+```
+
+```{r bloque-05, eval=FALSE}
+# Luego separamos la variable Part en dos, Part y Measure
+iris.t <- separate(iris.t, Part, into=c("Part", "Measure"))
+head(iris.t)
+```
+
+Ahora ya tiene formato *tidy*. Cada columna contiene una variable, y cada fila una observación.
+
+Podemos hacer lo mismo con `pivot_longer`. Observa como cambia la ordenación de las filas.
+
+```{r bloque-06, eval=FALSE}
+iris.t.2 <- pivot_longer(iris, col=-Species, names_to="Part", values_to="Value")
+head(iris.t.2)
+```
+
+```{r bloque-07, eval=FALSE}
+# Luego separamos la variable Part en dos, Part y Measure
+iris.t.2 <- separate(iris.t.2, Part, into=c("Part", "Measure"))
+head(iris.t.2)
+```
+
+### Librería `magrittr`: ceci n’est pas une pipe
+
+Como habrás observado, para conseguir formatear el conjunto `iris` hemos tenido que aplicar dos operaciones, `gather` y `separate`. Esto nos ha obligado a tener que crear una variable, `iris.t`, donde almacenar el resultado de `gather`, para luego pasárselo a `separate`. También podríamos haber hecho algo como:
+
+```{r bloque-08, eval=FALSE}
+iris.t <- separate(gather(iris, Part, Value, -Species),
+                   Part, into=c("Part", "Measure"))
+head(iris.t)
+```
+
+Pero queda algo confuso, y aún lo es más cuando en lugar de dos operaciones hemos de realizar varias seguidas.
+
+Una alternativa es usar la librería `magrittr` que define el operador `%>%` que permite encadenar este tipo acciones. El concepto es que los datos pasan de una función a otra como a través de una tubería (*pipe* en inglés) de funciones. Veamos cómo queda nuestro ejemplo:
+
+```{r bloque-09, eval=FALSE}
+iris.t <- gather(iris, Part, Value, -Species) %>% separate(Part, into=c("Part", "Measure")) 
+iris.t %>% head
+```
+
+Fíjate que no hace falta especificar el primer argumento en las funciones `gather`, `separate` y `head`. El operador `%>%` automáticamente lo hace por nosotros.
+
+### Ejemplo de visualización
+
+¿Por qué es mejor el formato *tidy* que el original? Una razón es que algunas librerías y funciones esperan encontrar los datos en formato *tidy*, entre ellas `ggplot2`. Por ejemplo, imagina que queremos representar los datos separados en función de la medida realizada, *Sepal o Petal*. Con los datos originales es complicado, puesto que esta información aparece distribuida en cuatro columnas. Con el conjunto *tidy* es inmediato.
+
+```{r bloque-10, eval=FALSE}
+library(ggplot2)
+ggplot(iris.t) + aes(Species, Value, color=Species) +
+  geom_jitter() + facet_grid(Part ~ .)
+```
+
+En los siguientes ejercicios veremos los ejemplos más típicos de datos desorganizados, o *messy data*:
+
+- Las cabeceras de las columnas son variables en sí mismas, no nombres de variables.
+- Más de una variable aparece en una sola columna.
+- Las variables aparecen tanto en filas como en columnas.
+- Varias unidades de observación están almacenadas en una única tabla.
+- Una única unidad de observación está almacenada en varias tablas.
+
+## Las cabeceras de las columnas son variables en lugar de nombres de variables
+
+El siguiente conjunto de datos muestra la relación entre los ingresos y la religión en EEUU.
+
+```{r bloque-11, eval=FALSE}
+print(load('data/pew_religion.Rdata'))
+```
+
+```{r bloque-12, eval=FALSE}
+head(pew_religion[, 1:10])
+```
+
+Como se ve, las cabeceras son valores de una variable de tipo factor (los ingresos) en lugar de nombres de variables.
+
+Este conjunto de datos tiene en realidad tres variables, que deberían estar en tres columnas: `religion`, `ingresos` y `frecuencia` (esta última con el número de casos).
+
+Para ver la utilidad de organizar los datos en formato *tidy*, imagina que quisieramos realizar un gráfico donde se mostrará la cantidad de gente por cada intervalo de ingresos:
+
+**¿Cómo lo harías con el conjunto original?**
+
+Fíjate que este gráfico es mucho más fácil de realizar si en lugar de tener los intervalos de ingresos repartidos en columnas los tuvieramos como una variable.
+
+Para convertir este conjunto a formato *tidy* tendremos que agrupar todas las columnas excepto la de `religion` en dos, una llamada `income` con los intervalos de ingresos, y otra llamada `freq` con el número de casos para cada `income`. Como ya hemos visto en el ejemplo del conjunto IRIS, esto se consigue con `gather`.
+
 
 
 
