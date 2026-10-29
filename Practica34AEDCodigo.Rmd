@@ -1,0 +1,23 @@
+---
+title: "Práctica 3 y 4. Preparación y manejo de Datos"
+subtitle: "Análisis Exploratorio de Datos · Máster en Ciencia de Datos · Universitat de València"
+author: "Miriam Caballero Cerveró"
+date: "`r Sys.Date()`"
+lang: es
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    number_sections: true
+  pdf_document:
+    toc: true
+    number_sections: true
+    latex_engine: xelatex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE)
+```
+
+
+
