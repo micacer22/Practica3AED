@@ -435,7 +435,7 @@ Crea un data frame denominado `flights.f` que contenga los vuelos que involucren
 ```{r ejercicio-7}
 # vuelos correspondientes a los aviones filtrados antes
 flights.f <- flights %>%
-  semi_join(planes.f, by = "tailnum")
+  semi_join(planes.f, by = "tailnum") #semijoin nos da la intersección
 
 # resultado
 head(flights.f)
@@ -581,21 +581,21 @@ str(table5)
 
 # table5 a formato tidy
 table5_tidy <- table5 %>%
-  unite(
+  unite( #une las columnas century y year
     col = "year",
     century, year,
     sep = ""
   ) %>%
-  separate(
+  separate( #divide la columna rate en cases y population
     col = rate,
     into = c("cases", "population"),
     sep = "/",
-    convert = TRUE
+    convert = TRUE #convierte los caracteres a números
   ) %>%
-  mutate(
+  mutate( #convierte la variable "year" a número entero
     year = as.integer(year)
   ) %>%
-  select(country, year, cases, population)
+  select(country, year, cases, population) #coloca las columnas en el orden que tiene table1
 
 # resultado
 head(table5_tidy)
@@ -610,6 +610,19 @@ all.equal(table5_tidy, table1)
 ### Ejercicio Extra 3
 
 Consigue un data frame denominado `Distance_Manufacturer_model` que contenga 4 columnas (`tailnum`,`Total_distance`, `manufacturer` y `model`) ordenado de mayor a menor en base a la variable `Total_distance`. Para ello une los data frames `Distances_plane` (calculado en el ejercicio anterior y que contiene las distancias totales) y `planes` (que contiene los datos de cada modelo de avión). La variable que te permitirá unir ambos data frames es `tailnum`. A continuación deberás ordenar, en orden descendente de la variable `Total_distance` el data frame resultante. Finalmente selecciona las variables que tiene que contener la tabla final (`Total_distance`, `manufacturer` y `model`). Utiliza el operador pipe para enlazar las funciones.
+```{r ejercicio extra-3}
+# Creamos df Distance_Manufacturer_model
+Distance_Manufacturer_model <- Distances_plane %>%
+  inner_join(planes, by = "tailnum") %>%
+  arrange(desc(Total_distance)) %>%
+  select(tailnum, Total_distance, manufacturer, model)
+
+# resultado
+head(Distance_Manufacturer_model)
+str(Distance_Manufacturer_model)
+```
+
+
 
 
 
