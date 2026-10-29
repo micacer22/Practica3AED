@@ -60,7 +60,7 @@ head(iris)
 Veamos que aspecto tiene el conjunto IRIS una vez estructurado:
 
 ```{r bloque-03, eval=FALSE}
-load('data/iris_tidy.Rdata')
+load('P3P4_ALUMNOS/data/iris_tidy.Rdata')
 head(iris.tidy)
 ```
 
@@ -163,7 +163,7 @@ En los siguientes ejercicios veremos los ejemplos más típicos de datos desorga
 El siguiente conjunto de datos muestra la relación entre los ingresos y la religión en EEUU.
 
 ```{r bloque-11, eval=FALSE}
-print(load('data/pew_religion.Rdata'))
+print(load('P3P4_ALUMNOS/data/pew_religion.Rdata'))
 ```
 
 ```{r bloque-12, eval=FALSE}
@@ -239,5 +239,48 @@ billboard_tidy$week <- as.integer(billboard_tidy$week)
 # resultado
 head(billboard_tidy)
 str(billboard_tidy)
+```
+## Varias variables en una misma columna
+
+El conjunto de datos `tuberculosis`, de la *World Health Organization*, presenta este tipo de desordenación (además de la vista en el apartado anterior). Muestra el número de casos de tuberculosis por país, año y grupo demográfico. Estos grupos demográficos se muestran en los nombres de las columnas como `m` o `f` (sexo) y la edad (0-14, 15-24, 25-34, 35-44, 45-54, 55-64, 65- y desconocido (`u`)).
+
+```{r bloque-14, eval=FALSE}
+load('P3P4_ALUMNOS/data/tb.Rdata')
+head(raw[, 1:16])
+```
+
+Podemos ver como efectivamente en una columna tenemos dos variables juntas, el sexo y el rango de edad. Por ejemplo, en `m014` la `m` hace referencia al sexo y `014` al rango de edad, dos variables que deberían estar separadas.
+
+Para pasar a formato *tidy* necesitamos realizar dos operaciones en este caso. En la primera juntaremos todas las columnas `m...` y `f...` y los conteos (los llamaremos `casos`). En la segunda, separaremos las columnas con los datos de tipo `m014` en dos columnas, `sexo` y `edad`.
+
+### Ejercicio 3
+
+Convierte el conjunto de datos TB en *tidy* utilizando `gather` y `separate`.
+
+```{r ejercicio-3}
+# Comprobar datos
+head(raw)
+str(raw)
+names(raw)
+
+# datos a formato tidy
+tb_tidy <- raw %>%
+  gather(
+    key = "sexo_edad",
+    value = "casos",
+    -country,
+    -year,
+    na.rm = TRUE
+  ) %>%
+  separate(
+    col = sexo_edad,
+    into = c("sexo", "edad"),
+    sep = 1
+  )
+
+# resultado
+head(tb_tidy)
+str(tb_tidy)
+summary(tb_tidy)
 ```
 
