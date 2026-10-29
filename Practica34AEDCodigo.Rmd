@@ -556,6 +556,21 @@ head(rankings)
 dim(canciones)
 dim(rankings)
 ```
+## TidyR. Una única unidad de observación almacenada en varias tablas
+
+También nos podemos encontrar casos donde las observaciones están distribuidas en varias tablas. El procedimiento general para abordar estos casos es:
+
+1.  Leer todos los ficheros en una lista de tablas.
+2.  Añadir una nueva columna a cada tabla con el nombre del fichero original.
+3.  Combinar todas las tablas en una.
+
+Esto se puede hacer fácilmente con las librerías `plyr` y `dplyr`.
+
+## TidyR. Otro conjunto messy…
+
+### Ejercicio Extra 2
+
+En la librería *tidyr* hay varios conjuntos de datos. **table1** es un conjunto *tidy* pero **table5** no lo es. Realiza las operaciones necesarias para obtener **table1** a partir de **table5**. También deben coincidir los tipos de datos de las columnas.
 
 
 
