@@ -19,5 +19,13 @@ output:
 knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE)
 ```
 
+# Librerías
+```{r librerias, eval=FALSE}
+library(pacman)
+packages=c("tidyverse", "knitr", "ggplot2", "datasets", "RColorBrewer",'dplyr','lubridate',"nycflights13")
+pacman::p_load(char=packages)
+```
+
+
 
 
