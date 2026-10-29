@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE)
 ```
 
 # Librerías
-```{r librerias, eval=FALSE}
+```{r librerias}
 library(pacman)
 packages=c("tidyverse", "knitr", "ggplot2", "datasets", "RColorBrewer",'dplyr','lubridate',"nycflights13")
 pacman::p_load(char=packages)
@@ -47,7 +47,7 @@ Parece fácil, pero el problema viene al definir exactamente qué es lo que ente
 
 Vamos a ver un ejemplo con el dataset IRIS.
 
-```{r bloque-02, eval=FALSE}
+```{r bloque-02}
 head(iris)
 ```
 
@@ -59,7 +59,7 @@ head(iris)
 
 Veamos que aspecto tiene el conjunto IRIS una vez estructurado:
 
-```{r bloque-03, eval=FALSE}
+```{r bloque-03}
 load('P3P4_ALUMNOS/data/iris_tidy.Rdata')
 head(iris.tidy)
 ```
@@ -88,7 +88,7 @@ También son interesantes las siguientes:
 
 Volviendo al ejemplo del dataset IRIS, veamos cómo podemos usar `gather` y `separate` para convertir el conjunto original `iris` en el conjunto `iris.tidy`.
 
-```{r bloque-04, eval=FALSE}
+```{r bloque-04}
 library(tidyr)
 # Primero agrupamos todas las unidades
 # Agrupamos todas las columnas con datos excepto Species, que está bien
@@ -98,7 +98,7 @@ iris.t <- gather(iris, Part, Value, -Species)
 head(iris.t)
 ```
 
-```{r bloque-05, eval=FALSE}
+```{r bloque-05}
 # Luego separamos la variable Part en dos, Part y Measure
 iris.t <- separate(iris.t, Part, into=c("Part", "Measure"))
 head(iris.t)
@@ -108,12 +108,12 @@ Ahora ya tiene formato *tidy*. Cada columna contiene una variable, y cada fila u
 
 Podemos hacer lo mismo con `pivot_longer`. Observa como cambia la ordenación de las filas.
 
-```{r bloque-06, eval=FALSE}
+```{r bloque-06}
 iris.t.2 <- pivot_longer(iris, col=-Species, names_to="Part", values_to="Value")
 head(iris.t.2)
 ```
 
-```{r bloque-07, eval=FALSE}
+```{r bloque-07}
 # Luego separamos la variable Part en dos, Part y Measure
 iris.t.2 <- separate(iris.t.2, Part, into=c("Part", "Measure"))
 head(iris.t.2)
@@ -123,7 +123,7 @@ head(iris.t.2)
 
 Como habrás observado, para conseguir formatear el conjunto `iris` hemos tenido que aplicar dos operaciones, `gather` y `separate`. Esto nos ha obligado a tener que crear una variable, `iris.t`, donde almacenar el resultado de `gather`, para luego pasárselo a `separate`. También podríamos haber hecho algo como:
 
-```{r bloque-08, eval=FALSE}
+```{r bloque-08}
 iris.t <- separate(gather(iris, Part, Value, -Species),
                    Part, into=c("Part", "Measure"))
 head(iris.t)
@@ -133,7 +133,7 @@ Pero queda algo confuso, y aún lo es más cuando en lugar de dos operaciones he
 
 Una alternativa es usar la librería `magrittr` que define el operador `%>%` que permite encadenar este tipo acciones. El concepto es que los datos pasan de una función a otra como a través de una tubería (*pipe* en inglés) de funciones. Veamos cómo queda nuestro ejemplo:
 
-```{r bloque-09, eval=FALSE}
+```{r bloque-09}
 iris.t <- gather(iris, Part, Value, -Species) %>% separate(Part, into=c("Part", "Measure")) 
 iris.t %>% head
 ```
@@ -144,7 +144,7 @@ Fíjate que no hace falta especificar el primer argumento en las funciones `gath
 
 ¿Por qué es mejor el formato *tidy* que el original? Una razón es que algunas librerías y funciones esperan encontrar los datos en formato *tidy*, entre ellas `ggplot2`. Por ejemplo, imagina que queremos representar los datos separados en función de la medida realizada, *Sepal o Petal*. Con los datos originales es complicado, puesto que esta información aparece distribuida en cuatro columnas. Con el conjunto *tidy* es inmediato.
 
-```{r bloque-10, eval=FALSE}
+```{r bloque-10}
 library(ggplot2)
 ggplot(iris.t) + aes(Species, Value, color=Species) +
   geom_jitter() + facet_grid(Part ~ .)
@@ -162,11 +162,11 @@ En los siguientes ejercicios veremos los ejemplos más típicos de datos desorga
 
 El siguiente conjunto de datos muestra la relación entre los ingresos y la religión en EEUU.
 
-```{r bloque-11, eval=FALSE}
+```{r bloque-11}
 print(load('P3P4_ALUMNOS/data/pew_religion.Rdata'))
 ```
 
-```{r bloque-12, eval=FALSE}
+```{r bloque-12}
 head(pew_religion[, 1:10])
 ```
 
@@ -287,7 +287,7 @@ summary(tb_tidy)
 
 Esta es la forma más complicada de datos desordenados, y es lo que ocurre en el conjunto de datos del *Global Historical Climatology Network*. Se muestra el tiempo para la estación `MX17004`, en México, durante 5 meses del año 2010.
 
-```{r bloque-15, eval=FALSE}
+```{r bloque-15}
 load('P3P4_ALUMNOS/data/weather.Rdata')
 head(raw[, 1:20])
 weather <- raw
@@ -520,4 +520,42 @@ head(Distances_plane)
 str(Distances_plane)
 nrow(Distances_plane)
 ```
+
+# Ejercicios Extra
+
+## TidyR. Varias unidades de observación en una sola tabla
+
+Volvemos al ejemplo del conjunto `Billboard` para ilustrar este caso. Si nos fijamos en la versión *tidy* que hemos obtenido en el ejercicio 2 vemos como `artist` y `time` se repiten para cada canción (`track`) y semana. Para evitar estas repeticiones hemos de dividir el dataframe en dos, uno de canciones donde almacenaremos el artista, el nombre de la canción y el tiempo, y otro con el *ranking* de canciones que nos dará la posición en el Top 100, la canción y la semana. A esta división de los datos en varias tablas para evitar duplicados se le llama *normalización*, y es habitual cuando estamos trabajando con datos almacenados en bases de datos, si bien no lo es tanto en el campo del análisis de datos, donde muchas veces para analizarlos se requiere volver a juntar de nuevo los datos en una única tabla.
+
+### Ejercicio Extra 1
+
+Separa los datos *tidy* que teníamos en el ejercicio 2 en dos tablas (data frames) tal y como se describe en el párrafo anterior y empleando la función `unique` para eliminar repeticiones.
+
+Opcionalmente se puede crear un identificador, `id`, asociado al nombre de la canción (`track`), y en la tabla de ranking solo usaremos este identificador en lugar del nombre de la canción.
+
+```{r ej extra 1}
+head(billboard_tidy)
+# tabla de canciones sin repeticiones
+canciones <- billboard_tidy %>%
+  select(artist, track, date.entered) %>%
+  unique()
+
+# un identificador para cada canción
+canciones <- canciones %>%
+  mutate(id = row_number()) %>%
+  select(id, everything())
+
+# tabla de rankings
+rankings <- billboard_tidy %>%
+  left_join(canciones, by = c("artist", "track", "date.entered")) %>%
+  select(id, week, rank)
+
+# resultados
+head(canciones)
+head(rankings)
+dim(canciones)
+dim(rankings)
+```
+
+
 
