@@ -283,4 +283,62 @@ head(tb_tidy)
 str(tb_tidy)
 summary(tb_tidy)
 ```
+## Variables almacenadas tanto en filas como en columnas
+
+Esta es la forma más complicada de datos desordenados, y es lo que ocurre en el conjunto de datos del *Global Historical Climatology Network*. Se muestra el tiempo para la estación `MX17004`, en México, durante 5 meses del año 2010.
+
+```{r bloque-15, eval=FALSE}
+load('P3P4_ALUMNOS/data/weather.Rdata')
+head(raw[, 1:20])
+weather <- raw
+```
+
+Como se observa, además de las variables `id`, `year` y `month`, tiene variables en las columnas `d1` a `d31` que deberían corresponder a una única variable `dia`, y en las filas, `tmin` y `tmax` deberían estar como columnas. Fíjate además que la columna `element` no es una variable, sino que almacena nombres de variables.
+
+Para obtener la versión *tidy* primero juntamos todos los días en una variable `dia`. Luego tendremos que separar la columna `element` en dos columnas, `tmax` y `tmin`. Esto último lo lograremos con la función `pivot_wider` de tidyr, que no hemos utilizado hasta ahora.
+
+### Ejercicio 4
+
+Obtén la versión *tidy* del conjunto de datos `weather` utilizando las funciones `pivot_longer` y `pivot_wider`. Además cambiaremos las columnas `year`, `month` y `dia` por una única variable `fecha`. Para que la operación `pivot_wider` no de error tendremos que eliminar los NA’s cuando usemos `pivot_longer`.
+
+```{r ejercicio-4}
+# Comprobar datos
+head(weather)
+str(weather)
+class(weather)
+
+# columnas días a formato largo
+weather_tidy <- weather %>%
+  pivot_longer(
+    cols = d1:d31,
+    names_to = "dia",
+    names_prefix = "d",
+    values_to = "temperatura",
+    values_drop_na = TRUE
+  ) %>%
+
+  # Separar temperaturas máximas y mínimas
+  pivot_wider(
+    names_from = element,
+    values_from = temperatura
+  ) %>%
+
+  # Crear columna de fecha
+  mutate(
+    fecha = as.Date(
+      sprintf("%04d-%02d-%02d", year, month, as.integer(dia))
+    )
+  ) %>%
+
+  # Eliminar columnas originales
+  select(-year, -month, -dia) %>%
+
+  # Ordenar los datos
+  arrange(fecha)
+
+# resultado
+head(weather_tidy)
+str(weather_tidy)
+summary(weather_tidy)
+```
 
